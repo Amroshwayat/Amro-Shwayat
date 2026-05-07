@@ -54,7 +54,14 @@ function addToCart(id) {
     const p = products.find(item => item.id === id);
     cart.push(p);
     updateCart();
-    alert("تمت الإضافة للعربة!");
+   // بدل alert("تمت الإضافة");
+Swal.fire({
+  title: 'تمت الإضافة!',
+  text: 'المنتج الآن في عربة التسوق الخاصة بك',
+  icon: 'success',
+  confirmButtonText: 'حسناً',
+  confirmButtonColor: '#4ecca3' // لون Web Net
+});
 }
 
 function updateCart() {
@@ -78,13 +85,35 @@ function updateCart() {
 function handleOrder(e) {
     e.preventDefault();
     lastOrderID = "WN-" + Math.floor(1000 + Math.random() * 9000);
-    alert("تم تأكيد طلبك! رقم التتبع: " + lastOrderID);
-    cart = [];
-    updateCart();
-    document.getElementById('displayOrderID').innerText = lastOrderID;
-    document.getElementById('trackInfo').style.display = "none";
-    document.getElementById('trackStatus').style.display = "block";
-    showPage('track');
+  Swal.fire({
+    title: 'تهانينا! تم استلام طلبك',
+    html: `
+        <div style="text-align: center;">
+            <p>شكراً لثقتك بـ <b>Web Net</b></p>
+            <div style="background: #f4f4f9; padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px dashed #4ecca3;">
+                <span style="display: block; font-size: 14px; color: #666;">رقم تتبع الشحنة</span>
+                <strong style="font-size: 24px; color: #1a1a2e;">${lastOrderID}</strong>
+            </div>
+            <p style="font-size: 14px; color: #888;">يرجى الاحتفاظ بالرقم لمتابعة حالة الطلب</p>
+        </div>
+    `,
+    icon: 'success',
+    confirmButtonText: 'تتبع طلبي الآن',
+    confirmButtonColor: '#4ecca3',
+    showClass: {
+        popup: 'animate__animated animate__zoomIn' // إذا كنت تستخدم مكتبة Animate.css
+    }
+}).then((result) => {
+    if (result.isConfirmed) {
+        // الأوامر التي تنفذ بعد الضغط على الزر
+        cart = []; // تفريغ السلة
+        updateCart();
+        document.getElementById('displayOrderID').innerText = lastOrderID;
+        document.getElementById('trackInfo').style.display = "none";
+        document.getElementById('trackStatus').style.display = "block";
+        showPage('track'); // توجيه المستخدم لصفحة التتبع
+    }
+});
 }
 
 // تتبع الطلب
@@ -95,7 +124,18 @@ function trackOrder() {
         document.getElementById('trackStatus').style.display = "block";
         document.getElementById('displayOrderID').innerText = id;
     } else {
-        alert("رقم الطلب غير صحيح!");
+     Swal.fire({
+    title: 'خطأ في الرقم!',
+    text: 'عذراً، رقم الطلب الذي أدخلته غير موجود في سجلات Web Net.',
+    icon: 'error',
+    confirmButtonText: 'إغلاق',
+    confirmButtonColor: '#e74c3c', // لون أحمر متناسق مع رسالة الخطأ
+    background: '#ffffff',
+    customClass: {
+        title: 'font-cairo',
+        popup: 'border-radius-15'
+    }
+});
     }
 }
 
